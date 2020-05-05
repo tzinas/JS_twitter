@@ -10,7 +10,7 @@ const FileStore = require('session-file-store')(session);
 var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy;
 
-
+app.use("/static", express.static('./static/'));
 app.use(express.static("public"));
 app.use(session({
     resave: true,
@@ -57,7 +57,7 @@ const User = sequelize.define('user', {
 
 
 (async () => {
-  await sequelize.sync({ force: true });
+    await sequelize.sync({ force: true });
     const tzinas = await User.create({ username: "tzinas", password: "tzinas"});
     const susan = await User.create({ username: "susan", password: "susan"});
     //console.log(tzinas.toJSON());
@@ -78,7 +78,7 @@ passport.use(new LocalStrategy(
         catch {
             console.log('Failed to query database');
         }
-    
+
   }
 ));
 
@@ -89,20 +89,32 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(
     async function(id, done) {
         let user = await User.findOne({where: { id: id }})
-        done(null, user); 
+        done(null, user);
     }
 );
 
 
+app.get('/logout', function(req, res){
+  console.log('LOG OUT')
+  req.logout();
+  res.redirect('/login');
+});
+
+
 app.get('/login', function (req, res) {
+  if (req.user){
+    res.redirect('/');
+  }
+  else{
     res.render('login');
+  }
 })
 
 
 app.post('/login',
   passport.authenticate('local', { successRedirect: '/',
-                                   failureRedirect: '/login',
-                                   failureFlash: false })
+  failureRedirect: '/login',
+  failureFlash: false })
 );
 
 app.get('/', (req, res) => {
@@ -113,6 +125,5 @@ app.get('/', (req, res) => {
         res.redirect('/login');
     }
 })
-
 
 app.listen(3000, () => console.log('Node.js app listening on port 3000.'))
