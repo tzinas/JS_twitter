@@ -5,22 +5,25 @@ const {Sequelize, DataTypes} = require('sequelize');
 const fs = require('fs');
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
+const FileStore = require('session-file-store')(session);
 
 var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy;
 
 
+app.use(express.static("public"));
+app.use(session({
+    resave: true,
+    secret: "cats",
+    saveUninitialized: true
+}));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.engine('pug', require('pug').__express)
 app.set('views', './views')
 app.set('view engine', 'pug')
-
-
-app.use(express.static("public"));
-app.use(session({ secret: "cats" }));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(passport.initialize());
-app.use(passport.session());
 
 
 const sequelize = new Sequelize('twitter', 'tzinas', 'tzinas', {
@@ -56,6 +59,7 @@ const User = sequelize.define('user', {
 (async () => {
   await sequelize.sync({ force: true });
     const tzinas = await User.create({ username: "tzinas", password: "tzinas"});
+    const susan = await User.create({ username: "susan", password: "susan"});
     //console.log(tzinas.toJSON());
 })();
 
@@ -82,15 +86,17 @@ passport.serializeUser(function(user, done) {
   done(null, user.id);
 });
 
-passport.deserializeUser(function(id, done) {
-    done(null, id);
-});
+passport.deserializeUser(
+    async function(id, done) {
+        let user = await User.findOne({where: { id: id }})
+        done(null, user); 
+    }
+);
 
 
 app.get('/login', function (req, res) {
     res.render('login');
-}
-)
+})
 
 
 app.post('/login',
@@ -101,10 +107,7 @@ app.post('/login',
 
 app.get('/', (req, res) => {
     if (req.user){
-        console.log('Tha name is ' + JSON.stringify(req.user));
-
-        //res.render('home', {name: req.);
-        res.send('Heeeeello World!');
+        res.render('home', {name: req.user.username});
     }
     else{
         res.redirect('/login');
