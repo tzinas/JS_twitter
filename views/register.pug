@@ -8,20 +8,20 @@ html
               label(for='username') Username:
               input#username.form-control(type='text', placeholder='Username' name='username')
               if (errors.username)
-                div= errors.username.msg
+                div(style={color: 'red'})= errors.username.msg
               div.form-group
               label(for='email') Email:
               input#email.form-control(type='text', placeholder='Email' name='email')
               if (errors.email)
-                div= errors.email.msg
+                div(style={color: 'red'})= errors.email.msg
             div.form-group
               label(for='password') Password:
               input#password.form-control(type='password' name='password')
               if (errors.password)
-                div= errors.password.msg
+                div(style={color: 'red'})= errors.password.msg
             div.form-group
               label(for='repeat-password') Repeat password:
               input#repeat_password.form-control(type='password' name='repeat_password')
               if (errors.repeat_password)
-                div= errors.repeat_password.msg
+                div(style={color: 'red'})= errors.repeat_password.msg
             button.btn.btn-primary(type='submit') Register

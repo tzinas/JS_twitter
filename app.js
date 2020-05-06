@@ -117,12 +117,19 @@ app.post('/register', [
     }).withMessage('Username already used').trim().escape(),
 
   check('email').isLength({ min: 1 }).withMessage('Insert an email').bail()
-    .isEmail() .withMessage('Incorrect Email').bail().trim().escape().normalizeEmail(),
+    .isEmail() .withMessage('Incorrect Email').bail()
+    .custom(async value => {
+      let user = await User.findOne({where: {email:value}})
+      if (user !== null){
+        return Promise.reject();
+      }
+    }).withMessage('Email already used').trim().escape()
+    .trim().escape().normalizeEmail(),
 
   check('password').isLength({ min: 1 }).withMessage('Insert a password').bail()
     .isLength({ min: 3 }).withMessage('Insert a more secure password'),
 
-  check('repeat_password').custom((value, {req}) => (value === req.body.password)).withMessage('Passwords does not match')
+  check('repeat_password').custom((value, {req}) => (value === req.body.password)).withMessage('Password does not match')
 ],
   (req, res, next) => {
   const errors = validationResult(req);
@@ -139,7 +146,6 @@ app.post('/register', [
   const email = req.body.email;
   const password = req.body.password;
   console.log('Hello');
-  await User.sync()
   const user = await User.create({ username, email, password});
   req.register_user = user;
   next();
