@@ -141,16 +141,13 @@ app.post('/register', [
   }
   next();
 }, async (req, res, next) => {
-  console.log('Hello');
   const username = req.body.username;
   const email = req.body.email;
   const password = req.body.password;
-  console.log('Hello');
   const user = await User.create({ username, email, password});
   req.register_user = user;
   next();
 }, (req, res) => {
-  console.log('Hello');
   const user = req.register_user;
   req.login(user, function(err) {
     if (err) { return next(err); }
