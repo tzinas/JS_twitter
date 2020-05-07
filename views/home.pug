@@ -3,5 +3,15 @@ html
     head
         title Login!
     body
+        if (success)
+          div.flash #{ success }
         h1= name
-        a(href='/logout') Log Out 
+        form(method='POST' action='/')
+          div.form-group
+            label(for='post') Post:
+            textarea#post.form-control(type='text', placeholder='Type Here' name='post' rows="4")
+            if (errors.post)
+              div(style={color: 'red'})= errors.post.msg
+          button.btn.btn-primary(type='submit') Post
+
+        a(href='/logout') Log Out

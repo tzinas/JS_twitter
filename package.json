@@ -21,6 +21,7 @@
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "pug": "^2.0.4",
+    "req-flash": "0.0.3",
     "sequelize": "^5.21.7",
     "sequelize-cli": "^5.5.1",
     "session-file-store": "^1.4.0",

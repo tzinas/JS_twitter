@@ -9,7 +9,7 @@ html
               input#username.form-control(type='text', placeholder='Username' name='username')
               if (errors.username)
                 div(style={color: 'red'})= errors.username.msg
-              div.form-group
+            div.form-group
               label(for='email') Email:
               input#email.form-control(type='text', placeholder='Email' name='email')
               if (errors.email)

@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const FileStore = require('session-file-store')(session);
 const {check, validationResult} = require('express-validator');
+const flash = require('req-flash');
 
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy;
@@ -16,8 +17,10 @@ app.use(express.static("public"));
 app.use(session({
   resave: true,
   secret: "cats",
-  saveUninitialized: true
+  saveUninitialized: true,
+  cookie: { maxAge: 60000 }
 }));
+app.use(flash());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -41,15 +44,19 @@ sequelize
     console.error('Unable to connect to the database:', err);
   });
 
+
 const User = sequelize.define('user', {
   // attributes
   username: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    unique: true
   },
   email: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    isEmail: true,
+    unique: true
   },
   password: {
     type: DataTypes.STRING,
@@ -57,10 +64,28 @@ const User = sequelize.define('user', {
   }
 }, {
   // options
-});
+})
+
+const Post = sequelize.define('post',{
+    content: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    date: {
+      type: DataTypes.DATE,
+      defaultValue: Sequelize.NOW,
+      allowNull: false
+    }
+})
+
+//Author
+User.hasMany(Post);
+Post.belongsTo(User);
+Post.sync();
+
+
 /*
 (async () => {
-    await sequelize.sync();
 })();
 */
 
@@ -153,11 +178,7 @@ app.post('/register', [
     if (err) { return next(err); }
     return res.redirect('/');
   });
-
-}
-
-
-);
+});
 
 
 
@@ -184,13 +205,60 @@ app.post('/login',
   failureFlash: false })
 );
 
+app.get('/:username', async (req, res, next) => {
+    if (req.user){
+      const username = req.params.username;
+      const user = await User.findOne({where: {username}});
+      if (!user){
+        res.redirect('/');
+      }
+      const posts = await user.getPosts();
+      res.render('user', {user, posts})
+    }
+    else{
+      res.redirect('/login');
+    }
+  }
+)
+
+
 app.get('/', (req, res) => {
   if (req.user){
-    res.render('home', {name: req.user.username});
+    res.render('home', {name: req.user.username, data: {}, errors: {}, success: req.flash('success')});
   }
   else{
     res.redirect('/login');
   }
 })
+
+app.post('/', [
+  check('post').isLength({ min: 1 }).withMessage('Can not submit an empty post!').trim().escape()
+  ],(req, res, next) =>{
+    if (req.user){
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.render('home', {
+          name: req.user.username,
+          data: req.body,
+          errors: errors.mapped()
+        });
+      }
+      next();
+    }
+  }, async (req, res, next) => {
+    const content = req.body.post;
+    const user = await User.findOne({where:{ username: req.user.username}});
+    const post = await Post.create({content});
+
+    await post.setUser(user);
+    await user.addPost(post);
+
+    next();
+  }, (req, res) => {
+      req.flash("success", "Your post is live!");
+      return res.redirect('/');
+  }
+);
+
 
 app.listen(3000, () => console.log('Node.js app listening on port 3000.'))
