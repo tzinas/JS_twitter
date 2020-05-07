@@ -1,0 +1,11 @@
+doctype html
+html
+    head
+      title= user.username
+    body
+      h1= user.username
+      div.posts
+        each post in posts
+          - var username = user.username;
+          a(href='/' + username)= user.username
+          p #{post.content} at #{post.date}
