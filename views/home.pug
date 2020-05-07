@@ -5,7 +5,8 @@ html
     body
         if (success)
           div.flash #{ success }
-        h1= name
+        - var username = user.username;
+        a(href='/' + username)= user.username
         form(method='POST' action='/')
           div.form-group
             label(for='post') Post:

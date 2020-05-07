@@ -17,8 +17,7 @@ app.use(express.static("public"));
 app.use(session({
   resave: true,
   secret: "cats",
-  saveUninitialized: true,
-  cookie: { maxAge: 60000 }
+  saveUninitialized: true
 }));
 app.use(flash());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -212,7 +211,7 @@ app.get('/:username', async (req, res, next) => {
       if (!user){
         res.redirect('/');
       }
-      const posts = await user.getPosts();
+      const posts = await user.getPosts({order: [['date', 'DESC']]});
       res.render('user', {user, posts})
     }
     else{
@@ -224,7 +223,7 @@ app.get('/:username', async (req, res, next) => {
 
 app.get('/', (req, res) => {
   if (req.user){
-    res.render('home', {name: req.user.username, data: {}, errors: {}, success: req.flash('success')});
+    res.render('home', {user: req.user, data: {}, errors: {}, success: req.flash('success')});
   }
   else{
     res.redirect('/login');
@@ -233,12 +232,13 @@ app.get('/', (req, res) => {
 
 app.post('/', [
   check('post').isLength({ min: 1 }).withMessage('Can not submit an empty post!').trim().escape()
-  ],(req, res, next) =>{
+], (req, res, next) =>{
     if (req.user){
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+
         return res.render('home', {
-          name: req.user.username,
+          user: req.user,
           data: req.body,
           errors: errors.mapped()
         });
@@ -247,7 +247,7 @@ app.post('/', [
     }
   }, async (req, res, next) => {
     const content = req.body.post;
-    const user = await User.findOne({where:{ username: req.user.username}});
+    const user = req.user;
     const post = await Post.create({content});
 
     await post.setUser(user);
