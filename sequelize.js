@@ -1,10 +1,8 @@
 'use strict'
-const config = require('config');
-const db = config.get('db');
 
 const { Sequelize, DataTypes } = require('sequelize')
 
-  var sequelize = new Sequelize(db.name, db.username, db.password, {
+  var sequelize = new Sequelize('twitter', 'tzinas', 'tzinas', {
     host: 'localhost',
     dialect: 'mariadb'
   })

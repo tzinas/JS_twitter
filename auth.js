@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs')
+
 module.exports = function(passport, LocalStrategy, User) {
   passport.use(new LocalStrategy(
     async function(username, password, done) {
@@ -6,7 +8,7 @@ module.exports = function(passport, LocalStrategy, User) {
         if (!user) {
           return done(null, false)
         }
-        if (user.password !== password) {
+        if (!bcrypt.compareSync(password, user.password)) {
           return done(null, false)
         }
         return done(null, user)

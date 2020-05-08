@@ -1,5 +1,7 @@
 'use strict'
 const { Sequelize, DataTypes } = require('sequelize')
+const bcrypt = require('bcryptjs')
+const saltRounds = 10
 
 module.exports = (sequelize) => {
   const User = sequelize.define('user', {
@@ -20,5 +22,12 @@ module.exports = (sequelize) => {
       allowNull: false
     }
   })
+
+  User.beforeCreate( (user, options) => {
+    const hash = bcrypt.hashSync(user.password, saltRounds);
+    user.password = hash;
+  })
+
+
   return User
 }

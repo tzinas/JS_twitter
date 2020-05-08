@@ -18,6 +18,7 @@ var LocalStrategy = require('passport-local').Strategy
 Post.belongsTo(User)
 User.hasMany(Post);
 
+
 const pass = require('./auth')(passport, LocalStrategy, User)
 
 app.use('/static', express.static('./static/'))

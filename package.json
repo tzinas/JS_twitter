@@ -11,7 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
+    "cb": "^0.1.0",
     "config": "^3.3.1",
     "cookie-parser": "^1.4.5",
     "ejs": "^3.1.2",
