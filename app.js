@@ -69,7 +69,7 @@ app.post('/register', [
       if (user !== null){
         return Promise.reject()
       }
-    }).withMessage('Username already used').trim().escape(),
+    }).withMessage('Username already used').trim(),
 
   check('email').isLength({ min: 1 }).withMessage('Insert an email').bail()
     .isEmail() .withMessage('Incorrect Email').bail().normalizeEmail()
@@ -78,8 +78,7 @@ app.post('/register', [
       if (user !== null){
         return Promise.reject()
       }
-    }).withMessage('Email already in use').trim().escape()
-    .trim().escape(),
+    }).withMessage('Email already in use').trim(),
 
   check('password').isLength({ min: 1 }).withMessage('Insert a password').bail()
     .isLength({ min: 3 }).withMessage('Insert a more secure password'),
@@ -164,7 +163,7 @@ app.get('/', (req, res) => {
 })
 
 app.post('/', [
-  check('post').isLength({ min: 1 }).withMessage('Can not submit an empty post!').trim().escape()
+  check('post').isLength({ min: 1 }).withMessage('Can not submit an empty post!').trim()
 ], (req, res, next) =>{
     if (req.user){
       const errors = validationResult(req)
