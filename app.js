@@ -112,16 +112,9 @@ app.get('/logout', function(req, res){
   res.redirect('/login')
 });
 
-function loginForm(req, res) {
-  if (req.user){
-    res.redirect('/')
-  }
-  else{
-    res.render('login', {user: req.user, title: 'Login | Post-It'})
-  }
-}
+const SessionController = require('./controllers/session')
 
-app.get('/login', loginForm)
+app.get('/login', SessionController.loginForm)
 
 
 app.post('/login',
