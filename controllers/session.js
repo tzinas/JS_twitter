@@ -6,5 +6,10 @@ module.exports = {
     else{
       res.render('login', {user: req.user, title: 'Login | Post-It'})
     }
+  },
+  logout: function (req, res){
+    req.logout();
+    res.redirect('/login')
   }
+
 }

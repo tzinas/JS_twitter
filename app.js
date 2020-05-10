@@ -104,15 +104,9 @@ app.post('/register', [
   });
 });
 
-
-
-app.get('/logout', function(req, res){
-  console.log('LOG OUT')
-  req.logout();
-  res.redirect('/login')
-});
-
 const SessionController = require('./controllers/session')
+
+app.get('/logout', SessionController.logout);
 
 app.get('/login', SessionController.loginForm)
 
