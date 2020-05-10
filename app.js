@@ -7,7 +7,7 @@ const bodyParser = require('body-parser')
 const { check, validationResult } = require('express-validator')
 const flash = require('req-flash')
 
-const { User, Post } = require('./models/db')
+const { User, Post } = require('./models')
 
 
 var passport = require('passport')
