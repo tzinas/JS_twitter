@@ -1,11 +1,11 @@
-doctype html
-html
-    head
-      title= user.username
-    body
-      h1= user.username
-      div.posts
-        each post in posts
-          - var username = user.username;
-          a(href='/' + username)= user.username
-          p #{post.content} at #{post.date}
+extends base
+
+block content
+
+  div#userprofile
+    img#userimage(src="/images/profile.png" height="200px" width="200px")
+    h1#username= user.username
+    p#bio Hello my friend
+  div#posts
+    each post in posts
+      include _post.pug

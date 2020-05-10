@@ -1,27 +1,45 @@
-doctype html
-html
-    head
-        title Register!
-    body
-        form(method='POST' action='/register')
-            div.form-group
-              label(for='username') Username:
-              input#username.form-control(type='text', placeholder='Username' name='username')
-              if (errors.username)
-                div(style={color: 'red'})= errors.username.msg
-            div.form-group
-              label(for='email') Email:
-              input#email.form-control(type='text', placeholder='Email' name='email')
-              if (errors.email)
-                div(style={color: 'red'})= errors.email.msg
-            div.form-group
-              label(for='password') Password:
-              input#password.form-control(type='password' name='password')
-              if (errors.password)
-                div(style={color: 'red'})= errors.password.msg
-            div.form-group
-              label(for='repeat-password') Repeat password:
-              input#repeat_password.form-control(type='password' name='repeat_password')
-              if (errors.repeat_password)
-                div(style={color: 'red'})= errors.repeat_password.msg
-            button.btn.btn-primary(type='submit') Register
+extends base
+
+block content
+
+  div#makepost
+    form(method='POST' action='/register')
+        div.form-group
+          label(for='username') Username:
+          if (!errors.username && !data.username)
+            input#username(type='text' class="form-control" placeholder='Username' name='username')
+          else if (!errors.username && data.username)
+            input#username(type='text' class="form-control is-valid" placeholder='Username' name='username' value=data.username)
+          else
+            input#username(type='text' class="form-control is-invalid" placeholder='Username' name='username')
+            div(class="invalid-feedback")= errors.username.msg
+
+        div.form-group
+          label(for='email') Email:
+          if (!errors.email && !data.email)
+            input#email(class="form-control" type='text', placeholder='Email' name='email')
+          else if (!errors.email && data.email)
+            input#email(class="form-control is-valid" type='text', placeholder='Email' name='email' value=data.email)
+          else
+            input#email(class="form-control is-invalid" type='text', placeholder='Email' name='email')
+            div(class="invalid-feedback")= errors.email.msg
+        div.form-group
+          label(for='password') Password:
+          if (!errors.password && !data.password)
+            input#password(class="form-control" type='password' name='password' placeholder='Password')
+          else if (!errors.password && data.password)
+            input#password(class="form-control is-valid" type='password' name='password' placeholder='Password')
+          else
+            input#password(class="form-control is-invalid" type='password' name='password' placeholder='Password')
+            div(class="invalid-feedback")= errors.password.msg
+        div.form-group
+          label(for='repeat_password') Repeat password:
+          if (!errors.repeat_password && !data.repeat_password)
+            input#repeat_password(class="form-control" type='password' name='repeat_password' placeholder='Repeat Password')
+          else if (!errors.repeat_password && data.repeat_password)
+            input#repeat_password(class="form-control is-valid" type='password' name='repeat password' placeholder='Repeat Password')
+          else
+            input#repeat_password(class="form-control is-invalid" type='password' name='repeat_password' placeholder='Repeat Password')
+            div(class="invalid-feedback")= errors.repeat_password.msg
+        button.btn.btn-primary(type='submit') Register
+        div#or_register_login or #[a(href='/login') Log in]

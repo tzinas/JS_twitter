@@ -1,18 +1,16 @@
-doctype html
-html
-    head
-        title Login!
-    body
-        if (success)
-          div.flash #{ success }
-        - var username = user.username;
-        a(href='/' + username)= user.username
-        form(method='POST' action='/')
-          div.form-group
-            label(for='post') Post:
-            textarea#post.form-control(type='text', placeholder='Type Here' name='post' rows="4")
-            if (errors.post)
-              div(style={color: 'red'})= errors.post.msg
-          button.btn.btn-primary(type='submit') Post
+extends base
 
-        a(href='/logout') Log Out
+block content
+
+  if (success)
+    div#postup(class="alert alert-success" role="alert") #{ success }
+  - var username = user.username;
+  div#makepost
+    h1 Welcome, #[a(href='/' + username)= user.username]!
+    form(method='POST' action='/')
+      div#posttext(class="form-group")
+        label(for='post') Make a new post:
+        textarea#post(class="form-control" type='text', placeholder='Type Here' name='post' rows="4")
+        if (errors.post)
+          div(style={color: 'red'})= errors.post.msg
+      button.btn.btn-primary(type='submit') Post

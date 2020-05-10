@@ -15,11 +15,14 @@ const Post = require('./models/post')(sequelize)
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
 
+var moment = require('moment')
+app.locals.moment = require('moment')
+
 Post.belongsTo(User)
 User.hasMany(Post);
 
 
-const pass = require('./auth')(passport, LocalStrategy, User)
+require('./auth')(passport, LocalStrategy, User)
 
 app.use('/static', express.static('./static/'))
 app.use(express.static('public'))
@@ -51,7 +54,9 @@ app.get('/register', function (req, res) {
   else{
     res.render('register', {
       data: {},
-      errors: {}
+      errors: {},
+      title: 'Register | Post-It',
+      user:req.user
     });
   }
 })
@@ -73,7 +78,7 @@ app.post('/register', [
       if (user !== null){
         return Promise.reject()
       }
-    }).withMessage('Email already used').trim().escape()
+    }).withMessage('Email already in use').trim().escape()
     .trim().escape(),
 
   check('password').isLength({ min: 1 }).withMessage('Insert a password').bail()
@@ -86,7 +91,9 @@ app.post('/register', [
   if (!errors.isEmpty()) {
     return res.render('register', {
       data: req.body,
-      errors: errors.mapped()
+      errors: errors.mapped(),
+      title: 'Register | Post-It',
+      user: req.user
     });
   }
   next();
@@ -119,7 +126,7 @@ app.get('/login', function (req, res) {
     res.redirect('/')
   }
   else{
-    res.render('login')
+    res.render('login', {user: req.user, title: 'Login | Post-It'})
   }
 })
 
@@ -138,7 +145,7 @@ app.get('/:username', async (req, res, next) => {
         res.redirect('/')
       }
       const posts = await user.getPosts({order: [['date', 'DESC']]});
-      res.render('user', {user, posts})
+      res.render('user', {user, posts, title: user.username + ' | Post-It', url:'/user'})
     }
     else{
       res.redirect('/login')
@@ -149,7 +156,7 @@ app.get('/:username', async (req, res, next) => {
 
 app.get('/', (req, res) => {
   if (req.user){
-    res.render('home', {user: req.user, data: {}, errors: {}, success: req.flash('success')})
+    res.render('home', {user: req.user, data: {}, errors: {}, success: req.flash('success'), title: 'Post-It', url: '/'})
   }
   else{
     res.redirect('/login')
@@ -166,7 +173,9 @@ app.post('/', [
         return res.render('home', {
           user: req.user,
           data: req.body,
-          errors: errors.mapped()
+          errors: errors.mapped(),
+          title: 'Post-It',
+          url: '/'
         });
       }
       next();

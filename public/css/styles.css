@@ -1,0 +1,55 @@
+body {
+  padding-top: 4.5rem;
+  margin: 0;
+  border: 0;
+  background-color: #eee;
+}
+nav {
+  margin: 0;
+  padding: 0;
+}
+#start {
+  padding: 0;
+}
+#makepost {
+  padding: 40px;
+}
+textarea#post {
+  padding-right: 400px;
+}
+#navbarSupportedContent {
+  padding-left: 90px;
+}
+
+#posttext {
+  padding-right: 600px;
+}
+#or_register_login {
+  padding-top: 10px
+}
+#postup {
+  margin-top: 10px;
+  margin-left: -bottom: 0;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+#userprofile{
+  text-align:center;
+  padding: 0;
+  margin-right: 0;
+  width: 500px;
+  margin-top: 70px;
+  position: fixed;
+}
+#posts {
+  margin-left: 500px;
+}
+img#postuserimage {
+  margin-right: 10px;
+}
+#postdate {
+  float: right;
+}
+img {
+  border-radius: 50%;
+}

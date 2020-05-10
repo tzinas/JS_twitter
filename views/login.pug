@@ -1,14 +1,14 @@
-doctype html
-html
-    head
-        title Login!
-    body
-        form(method='POST' action='/login')
-          div.form-group
-            label(for='username') Username:
-            input#username.form-control(type='text', name='username')
-          div.form-group
-            label(for='password') Password:
-            input#pw.form-control(type='password' name='password')
-          button.btn.btn-primary(type='submit') Log In
-          a(href='/register') Register
+extends base
+
+block content
+
+  div#makepost
+    form(method='POST' action='/login')
+      div(class="form-group")
+        label(for='username') Username:
+        input#username.form-control(type='text', name='username')
+      div(class="form-group")
+        label(for='password') Password:
+        input#pw.form-control(type='password' name='password')
+      button.btn.btn-primary(type='submit') Log In
+      div#or_register_login or #[a(href='/register') Register]
