@@ -1,7 +1,7 @@
 'use strict'
-const { Sequelize, DataTypes } = require('sequelize')
+const { Sequelize } = require('sequelize')
 
-module.exports = (sequelize) => {
+module.exports = (sequelize, DataTypes) => {
   const Post = sequelize.define('post',{
     content: {
       type: DataTypes.TEXT,

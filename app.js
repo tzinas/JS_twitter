@@ -6,10 +6,8 @@ const app = express()
 const bodyParser = require('body-parser')
 const { check, validationResult } = require('express-validator')
 const flash = require('req-flash')
-const sequelize = require('./sequelize')
 
-const User = require('./models/user')(sequelize)
-const Post = require('./models/post')(sequelize)
+const { User, Post } = require('./models/db')
 
 
 var passport = require('passport')
