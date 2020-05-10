@@ -1,7 +1,7 @@
 'use strict'
 
 const { Sequelize, DataTypes } = require('sequelize')
-const db = {}
+const models = {}
 
 var sequelize = new Sequelize('twitter', 'tzinas', 'tzinas', {
   host: 'localhost',
@@ -17,7 +17,10 @@ sequelize
   console.error('Unable to connect to the database:', err)
 })
 
-db.User = require('./user')(sequelize, DataTypes)
-db.Post = require('./post')(sequelize, DataTypes)
+models.User = require('./user')(sequelize, DataTypes)
+models.Post = require('./post')(sequelize, DataTypes)
 
-module.exports = db
+models.User.associate(models)
+models.Post.associate(models)
+
+module.exports = models

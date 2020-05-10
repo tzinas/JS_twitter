@@ -16,9 +16,6 @@ var LocalStrategy = require('passport-local').Strategy
 var moment = require('moment')
 app.locals.moment = require('moment')
 
-Post.belongsTo(User)
-User.hasMany(Post);
-
 
 require('./auth')(passport, LocalStrategy, User)
 

@@ -27,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
     user.password = hash;
   })
 
+  User.associate = (models) => {
+    User.hasMany(models.Post);
+  }
+
 
   return User
 }
