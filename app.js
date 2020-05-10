@@ -40,23 +40,9 @@ app.set('view engine', 'pug')
 })();
 */
 
-
-
-app.get('/register', function (req, res) {
-  if (req.user){
-    res.redirect('/')
-  }
-  else{
-    res.render('register', {
-      data: {},
-      errors: {},
-      title: 'Register | Post-It',
-      user:req.user
-    });
-  }
-})
-
 const UserController = require('./controllers/user')
+
+app.get('/register', UserController.registerForm)
 
 app.post('/register', UserController.registerValidation, UserController.register);
 

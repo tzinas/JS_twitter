@@ -57,6 +57,21 @@ module.exports = {
     .isLength({ min: 3 }).withMessage('Insert a more secure password'),
 
     check('repeat_password').custom((value, {req}) => (value === req.body.password)).withMessage('Password does not match')
-  ]
+  ],
+  registerForm: function (req, res) {
+    if (req.user){
+      res.redirect('/')
+    }
+    else{
+      res.render('register', {
+        data: {},
+        errors: {},
+        title: 'Register | Post-It',
+        user:req.user
+      })
+    }
+  }
+
+
 
 }
