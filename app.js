@@ -84,8 +84,7 @@ app.post('/register', [
     .isLength({ min: 3 }).withMessage('Insert a more secure password'),
 
   check('repeat_password').custom((value, {req}) => (value === req.body.password)).withMessage('Password does not match')
-],
-  (req, res, next) => {
+],async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return res.render('register', {
@@ -95,16 +94,10 @@ app.post('/register', [
       user: req.user
     });
   }
-  next();
-}, async (req, res, next) => {
   const username = req.body.username
   const email = req.body.email
   const password = req.body.password
   const user = await User.create({ username, email, password});
-  req.register_user = user
-  next();
-}, (req, res) => {
-  const user = req.register_user
   req.login(user, function(err) {
     if (err) { return next(err)}
     return res.redirect('/')
@@ -119,15 +112,16 @@ app.get('/logout', function(req, res){
   res.redirect('/login')
 });
 
-
-app.get('/login', function (req, res) {
+function loginForm(req, res) {
   if (req.user){
     res.redirect('/')
   }
   else{
     res.render('login', {user: req.user, title: 'Login | Post-It'})
   }
-})
+}
+
+app.get('/login', loginForm)
 
 
 app.post('/login',
@@ -136,63 +130,63 @@ app.post('/login',
   failureFlash: false })
 );
 
-app.get('/:username', async (req, res, next) => {
-    if (req.user){
-      const username = req.params.username
-      const user = await User.findOne({where: {username}})
-      if (!user){
-        res.redirect('/')
-      }
-      const posts = await user.getPosts({order: [['date', 'DESC']]});
-      res.render('user', {user, posts, title: user.username + ' | Post-It', url:'/user'})
+async function viewProfile(req, res) {
+  if (req.user){
+    const username = req.params.username
+    const user = await User.findOne({where: {username}})
+    if (!user){
+      res.redirect('/')
     }
-    else{
-      res.redirect('/login')
-    }
+    const posts = await user.getPosts({order: [['date', 'DESC']]});
+    res.render('user', {user, posts, title: user.username + ' | Post-It', url:'/user'})
   }
-)
+  else{
+    res.redirect('/login')
+  }
+}
 
+app.get('/:username', viewProfile)
 
-app.get('/', (req, res) => {
+function viewHome(req, res) {
   if (req.user){
     res.render('home', {user: req.user, data: {}, errors: {}, success: req.flash('success'), title: 'Post-It', url: '/'})
   }
   else{
     res.redirect('/login')
   }
-})
+}
 
-app.post('/', [
-  check('post').isLength({ min: 1 }).withMessage('Can not submit an empty post!').trim()
-], (req, res, next) =>{
-    if (req.user){
-      const errors = validationResult(req)
-      if (!errors.isEmpty()) {
 
-        return res.render('home', {
-          user: req.user,
-          data: req.body,
-          errors: errors.mapped(),
-          title: 'Post-It',
-          url: '/'
-        });
-      }
-      next();
+app.get('/', viewHome)
+
+async function makePost(req, res) {
+  if (req.user){
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+
+      return res.render('home', {
+        user: req.user,
+        data: req.body,
+        errors: errors.mapped(),
+        title: 'Post-It',
+        url: '/'
+      });
     }
-  }, async (req, res, next) => {
     const content = req.body.post
     const user = req.user;
     const post = await Post.create({content})
     console.log(post.content)
     await post.setUser(user)
     await user.addPost(post)
+    req.flash("success", "Your post is live!")
+    return res.redirect('/')
 
-    next();
-  }, (req, res) => {
-      req.flash("success", "Your post is live!")
-      return res.redirect('/')
   }
-);
+}
+
+app.post('/', [
+  check('post').isLength({ min: 1 }).withMessage('Can not submit an empty post!').trim()
+], makePost);
 
 
 app.listen(3000, () => console.log('Node.js app listening on port 3000.'))
