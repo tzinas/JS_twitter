@@ -29,8 +29,9 @@ module.exports = (sequelize, DataTypes) => {
 
   User.associate = (models) => {
     User.hasMany(models.Post);
+    User.belongsToMany(models.User, {as: { singular: 'Follower', plural: 'Followers' }, through: 'FollowersTable'});
+    User.belongsToMany(models.User, {as: { singular: 'Following', plural: 'Followings' }, through: 'FollowingTable'});
   }
-
 
   return User
 }

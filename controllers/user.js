@@ -4,13 +4,17 @@ const { User } = require('../models')
 module.exports = {
   viewProfile: async function (req, res) {
     if (req.user){
-      const username = req.params.username
-      const user = await User.findOne({where: {username}})
-      if (!user){
+      const user = req.user
+      const profileUsername = req.params.username
+      const profileUser = await User.findOne({where: {username: profileUsername}})
+      if (!profileUser){
         res.redirect('/')
       }
-      const posts = await user.getPosts({order: [['date', 'DESC']]});
-      res.render('user', {user, posts, title: user.username + ' | Post-It', url:'/user'})
+      const posts = await profileUser.getPosts({order: [['date', 'DESC']]});
+      const followers = await profileUser.countFollowers()
+      const following = await profileUser.countFollowings()
+      const isFollowing = await user.hasFollowing(profileUser)
+      res.render('user', {user, profileUser, posts, title: user.username + ' | Post-It', url:'/user', followers, following, isFollowing})
     }
     else{
       res.redirect('/login')

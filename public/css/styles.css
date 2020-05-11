@@ -53,3 +53,17 @@ img#postuserimage {
 img {
   border-radius: 50%;
 }
+#followers {
+  display: inline-block;
+  margin-right: 15px;
+}
+#following {
+  display: inline-block;
+  margin-left: 15px;
+}
+#followButton {
+  margin-top: 30px;
+}
+#unfollowButton {
+  margin-top: 30px;
+}

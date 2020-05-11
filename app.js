@@ -62,17 +62,39 @@ app.post('/login',
 
 app.get('/:username', UserController.viewProfile)
 
-function viewHome(req, res) {
+app.get('/follow/:username', async (req, res) => {
   if (req.user){
-    res.render('home', {user: req.user, data: {}, errors: {}, success: req.flash('success'), title: 'Post-It', url: '/'})
+    const currentUser = req.user
+    const username = req.params.username
+    const user = await User.findOne({where: {username}})
+    const url = '/' + username
+    if (!user){
+      res.redirect(url)
+    }
+    currentUser.addFollowing(user)
+    user.addFollower(currentUser)
+    res.redirect(url)
   }
-  else{
-    res.redirect('/login')
+})
+
+app.get('/unfollow/:username', async (req, res) => {
+  if (req.user){
+    const currentUser = req.user
+    const username = req.params.username
+    const user = await User.findOne({where: {username}})
+    const url = '/' + username
+    if (!user){
+      res.redirect(url)
+    }
+    currentUser.removeFollowing(user)
+    user.removeFollower(currentUser)
+    res.redirect(url)
   }
-}
+})
 
+const HomeController = require('./controllers/home')
 
-app.get('/', viewHome)
+app.get('/', HomeController.viewHome)
 
 const PostController = require('./controllers/post')
 
