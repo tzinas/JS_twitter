@@ -10,10 +10,13 @@ block content
     form(method='POST' action='/')
       div#posttext(class="form-group")
         label(for='post') Make a new post:
-        textarea#post(class="form-control" type='text', placeholder='Type Here' name='post' rows="4")
         if (errors.post)
-          div(style={color: 'red'})= errors.post.msg
+          textarea#post(class="form-control is-invalid" type='text', placeholder='Type Here' name='post' rows="4")
+          div(class="invalid-feedback")= errors.post.msg
+        else
+          textarea#post(class="form-control" type='text', placeholder='Type Here' name='post' rows="4")
+
       button.btn.btn-primary(type='submit') Post
   div#homeFeed
-    each post, i in posts
+    each userPost, i in posts
       include _post.pug

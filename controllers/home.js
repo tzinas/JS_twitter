@@ -4,22 +4,22 @@ const { Op } = require("sequelize")
 module.exports = {
   viewHome: async function viewHome(req, res) {
     if (req.user){
-      user = req.user
-      const followings = await user.getFollowings()
+      const followings = await req.user.getFollowings()
       var followingIds = []
 
       followings.forEach((following, i) => {
         followingIds.push(following.id)
       })
 
-
       var posts = await Post.findAll({
         where: {
           userId: {
             [Op.or]: followingIds
           }
-        }
+        },
+        order: [['date', 'DESC']]
       })
+
       if (followingIds.length == 0){
         posts = []
       }
