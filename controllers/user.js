@@ -74,6 +74,34 @@ module.exports = {
         user:req.user
       })
     }
+  },
+  UnfollowUser: async (req, res) => {
+    if (req.user){
+      const currentUser = req.user
+      const username = req.params.username
+      const user = await User.findOne({where: {username}})
+      const url = '/' + username
+      if (!user){
+        res.redirect(url)
+      }
+      currentUser.removeFollowing(user)
+      user.removeFollower(currentUser)
+      res.redirect(url)
+    }
+  },
+  FollowUser: async (req, res) => {
+    if (req.user){
+      const currentUser = req.user
+      const username = req.params.username
+      const user = await User.findOne({where: {username}})
+      const url = '/' + username
+      if (!user){
+        res.redirect(url)
+      }
+      currentUser.addFollowing(user)
+      user.addFollower(currentUser)
+      res.redirect(url)
+    }
   }
 
 
