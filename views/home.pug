@@ -14,3 +14,6 @@ block content
         if (errors.post)
           div(style={color: 'red'})= errors.post.msg
       button.btn.btn-primary(type='submit') Post
+  div#homeFeed
+    each post, i in posts
+      include _post.pug

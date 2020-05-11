@@ -52,20 +52,15 @@ app.get('/logout', SessionController.logout);
 
 app.get('/login', SessionController.loginForm)
 
-
 app.post('/login',
   passport.authenticate('local', { successRedirect: '/',
   failureRedirect: '/login',
   failureFlash: false })
 );
 
-
 app.get('/:username', UserController.viewProfile)
 
-
 app.get('/follow/:username', UserController.FollowUser)
-
-
 
 app.get('/unfollow/:username', UserController.UnfollowUser)
 

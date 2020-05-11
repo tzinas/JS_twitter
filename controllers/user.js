@@ -14,7 +14,12 @@ module.exports = {
       const followers = await profileUser.countFollowers()
       const following = await profileUser.countFollowings()
       const isFollowing = await user.hasFollowing(profileUser)
-      res.render('user', {user, profileUser, posts, title: user.username + ' | Post-It', url:'/user', followers, following, isFollowing})
+      var postAuthors = []
+      for (i=0; i<posts.length; i++){
+        var author = await posts[i].getUser()
+        postAuthors.push(author.username)
+      }
+      res.render('user', {user, profileUser, posts, title: user.username + ' | Post-It', url:'/user', followers, following, isFollowing, postAuthors})
     }
     else{
       res.redirect('/login')

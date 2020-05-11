@@ -16,7 +16,5 @@ block content
       else
         a#unfollowButton(class="btn btn-secondary" href='/unfollow/' + username) Unfollow
   div#posts
-    each post in posts
+    each post, i in posts
       include _post.pug
-  script(src='/javascripts/counter.js').
-    test='#{JSON.stringify(username)}'
