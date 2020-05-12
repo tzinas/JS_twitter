@@ -5,7 +5,7 @@ block content
   div#userprofile
     - var username = profileUser.username;
     img#userimage(src="/images/profile.png" height="200px" width="200px")
-    h1#username= profileUser.username
+    h1#username= username
     p#bio Hello my friend
     div#followers Followers: #{followers}
     div#following Following: #{following}
@@ -16,5 +16,5 @@ block content
       else
         a#unfollowButton(class="btn btn-secondary" href='/unfollow/' + username) Unfollow
   div#posts
-    each userPost, i in posts
+    each post in posts
       include _post.pug

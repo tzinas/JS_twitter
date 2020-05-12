@@ -38,11 +38,12 @@ textarea#post {
   padding: 0;
   margin-right: 0;
   width: 500px;
-  margin-top: 70px;
+  margin-top: 20px;
   position: fixed;
 }
 #posts {
   margin-left: 500px;
+  margin-top: 50px;
 }
 img#postuserimage {
   margin-right: 10px;

@@ -33,5 +33,13 @@ module.exports = (sequelize, DataTypes) => {
     User.belongsToMany(models.User, {as: { singular: 'Following', plural: 'Followings' }, through: 'FollowingTable'});
   }
 
+  User.getFeed = async (user, models) => {
+    const followings = await user.getFollowings()
+    var followingIds = followings.map((following) => {
+      return following.id
+    })
+    followingIds.push(user.id)
+    return await models.Post.getCombinedFeed(followingIds, models)
+  }
   return User
 }

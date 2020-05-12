@@ -10,16 +10,14 @@ module.exports = {
       if (!profileUser){
         res.redirect('/')
       }
-      const posts = await profileUser.getPosts({order: [['date', 'DESC']]});
+      const posts = await profileUser.getPosts({order: [['date', 'DESC']],
+        include: [User]});
       const followers = await profileUser.countFollowers()
       const following = await profileUser.countFollowings()
       const isFollowing = await user.hasFollowing(profileUser)
-      var postAuthors = []
-      for (i=0; i<posts.length; i++){
-        var author = await posts[i].getUser()
-        postAuthors.push(author.username)
-      }
-      res.render('user', {user, profileUser, posts, title: user.username + ' | Post-It', url:'/user', followers, following, isFollowing, postAuthors})
+      res.render('user', {user, profileUser, posts,
+        title: user.username + ' | Post-It', url:'/user', followers,
+        following, isFollowing})
     }
     else{
       res.redirect('/login')
@@ -65,7 +63,8 @@ module.exports = {
     check('password').isLength({ min: 1 }).withMessage('Insert a password').bail()
     .isLength({ min: 3 }).withMessage('Insert a more secure password'),
 
-    check('repeat_password').custom((value, {req}) => (value === req.body.password)).withMessage('Password does not match')
+    check('repeat_password').custom((value, {req}) =>
+      (value === req.body.password)).withMessage('Password does not match')
   ],
   registerForm: function (req, res) {
     if (req.user){
