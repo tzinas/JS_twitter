@@ -9,8 +9,8 @@ const reactServer = 'http://localhost:3000'
 const httpProxy = require('http-proxy')
 const apiProxy = httpProxy.createProxyServer()
 
-var passport = require('passport')
-var LocalStrategy = require('passport-local').Strategy
+const passport = require('passport')
+const LocalStrategy = require('passport-local').Strategy
 require('./auth')(passport, LocalStrategy, User)
 
 app.use('/api/static', express.static('./static/'))
