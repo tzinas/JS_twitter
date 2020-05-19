@@ -2,7 +2,7 @@
 const { Sequelize, Op } = require('sequelize')
 
 module.exports = (sequelize, DataTypes) => {
-  const Post = sequelize.define('post',{
+  const Post = sequelize.define('post', {
     content: {
       type: DataTypes.TEXT,
       allowNull: false
@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   Post.getCombinedFeed = async (followingIds, models) => {
-    var posts = await Post.findAll({
+    let posts = await Post.findAll({
       where: {
         userId: {
           [Op.or]: followingIds
@@ -28,11 +28,13 @@ module.exports = (sequelize, DataTypes) => {
       order: [['date', 'DESC']],
       include: [models.User]
     })
-    if (followingIds.length == 0){
+    if (followingIds.length === 0) {
       posts = []
     }
     return posts
   }
+
+  Post.exportName = 'Post'
 
   return Post
 }

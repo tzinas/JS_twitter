@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Base from './Base'
+import api from './api'
 import { Redirect } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
-const axios = require('axios');
-const qs = require('qs')
 
 
 const TITLE = 'Post-it | Log in'
@@ -16,32 +15,30 @@ function Login() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    axios.get('http://localhost:4000/api/account/verify_credentials')
-    .then((result) => {
-      setUser(result.data.user)
-      setLoading(false)
-    }).catch((error) => {
-      setLoading(false)
-    })
+    async function fetchUser() {
+      try {
+        const result = await api.get('/account/verify_credentials')
+        setUser(result.data.user)
+        setLoading(false)
+      } catch {
+        setLoading(false)
+      }
+    }
+    fetchUser()
   }, [])
 
   const handleSubmit = event => {
     event.preventDefault()
-    axios.post('http://localhost:4000/api/account/login', qs.stringify({ username, password }),
-    { headers: {'Content-Type': 'application/x-www-form-urlencoded'} })
-    .then(res => {
-      console.log(res)
-      console.log(res.data)
-      if (res.data) {
+    async function fetchLoginData() {
+      try {
+        const result = await api.post('/account/login', { username, password })
         setRedirect(true)
-      }
-      else {
+      } catch (error) {
         setUsername('')
         setPassword('')
       }
-    }).catch(function (error) {
-      console.log(error);
-    })
+    }
+    fetchLoginData()
   }
 
   const LogIn = () => {
@@ -52,13 +49,9 @@ function Login() {
       return <div></div>
     }
   }
-  console.log('hey')
   if(!loading) {
     return (
-      <div id="makepost">
-        <Helmet>
-          <title>{ TITLE }</title>
-        </Helmet>
+      <div id="start">
         <Base url="/login" user={user} />
         {LogIn()}
         <form onSubmit={handleSubmit}>
@@ -85,7 +78,11 @@ function Login() {
     )
   }
   else {
-    return <div>hey</div>
+    return (
+      <Helmet>
+        <title>{ TITLE }</title>
+      </Helmet>
+    )
   }
 }
 

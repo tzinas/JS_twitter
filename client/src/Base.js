@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import { Redirect } from 'react-router-dom'
-const axios = require('axios');
+import api from './api'
 
 function Base (params) {
   const [loggedIn, setLoggedIn] = useState(true)
-  const handleLogOut = (event) => {
+  const handleLogOut = async (event) => {
     event.preventDefault()
-
-    axios.get('http://localhost:4000/api/account/logout')
-    .then((result) => {
+    try {
+      const result = await api.get('/account/logout')
       setLoggedIn(false)
-    })
+    } catch {
+      console.log('Could not log out')
+    }
   }
   if(loggedIn){
     return (
       <div>
-        <div id="start" className="container-fluid">
+        <div className="container-fluid">
           <nav className="navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
             <a className="navbar-brand" href="/home">PostIt</a>
             <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

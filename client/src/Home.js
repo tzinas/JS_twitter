@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet'
 import Base from './Base'
 import Post from './Post'
+import api from './api'
 import { Redirect } from 'react-router-dom'
-const axios = require('axios');
-const qs = require('qs')
 
 const TITLE = 'Post-It'
 
@@ -17,46 +16,55 @@ function Home() {
   const [posts, setPosts] = useState()
 
   useEffect(() => {
-    axios.get('http://localhost:4000/api/home')
-    .then((result) => {
-      setUser(result.data.user)
-      setPosts(result.data.posts)
-      setLoading(false)
-    })
-
+    async function fetchUser() {
+      try {
+        const result = await api.get('/account/verify_credentials')
+        setUser(result.data.user)
+        async function fetchPosts() {
+          try {
+            const postResult = await api.get('/posts/home')
+            setPosts(postResult.data.posts)
+            setLoading(false)
+          } catch {
+            setLoading(false)
+          }
+        }
+        fetchPosts()
+      } catch {
+        setLoading(false)
+      }
+    }
+    fetchUser()
   }, [])
 
   function Success() {
     if (success) {
-      return <div id="postup" class="alert alert-success" role="alert" > { success }</div>
+      return <div id="postup" className="alert alert-success" role="alert" > { success }</div>
     }
     else {
       return <div></div>
     }
   }
 
-  const handleSubmit = event => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
-
-    axios.post('http://localhost:4000/api/home', qs.stringify({ post }),
-    { headers: {'Content-Type': 'application/x-www-form-urlencoded'} })
-    .then(result => {
+    try {
+      const result = await api.post('/post/create', { post })
       setSuccess(result.data.success)
       setPosts(result.data.posts)
       setPost('')
-    }).catch(error => {
+    } catch (error) {
       if(error.response) {
         setSuccess('')
         setError(error.response.data.error.post.msg)
       }
-    })
+    }
   }
 
   const handleChange = e => {
     setPost(e.target.value)
     setError('')
   }
-
   if(!loading) {
     if(!user) {
       return <Redirect to='/login' />
@@ -64,12 +72,9 @@ function Home() {
     else{
       return (
         <div>
-          <Helmet>
-            <title>{ TITLE }</title>
-          </Helmet>
           <Base url="/" user={user} />
           <Success />
-          <div id="makepost">
+          <div id="start">
             <h1> Welcome, <a href={'/user/' + user.username}>{user.username}</a>!</h1>
             <form onSubmit={handleSubmit}>
               <div id="posttext" className="form-group">
